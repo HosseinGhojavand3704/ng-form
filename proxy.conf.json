@@ -1,0 +1,8 @@
+{
+    "/app": {
+        "target": "https://accounts.mail.ir",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug"
+    }
+}

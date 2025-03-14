@@ -1,0 +1,20 @@
+.layout-auth {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  &::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('../../../assets/images/background-app.jpg') center/cover no-repeat;
+    filter: brightness(50%);
+    z-index: -1;
+  }
+}

@@ -1,0 +1,47 @@
+<div class="register-container">
+  <div class="register-form">
+    <form [formGroup]="signUpForm" class="signup-wrapper" (ngSubmit)="onSubmit()">
+      @let _formConfig = formConfig();
+      @if (_formConfig) {
+        <h4>{{ getTranslationKey('title') | translate }}</h4>
+
+        @for (field of _formConfig?.fields; track field) {
+          @let _control = signUpForm.get(field.name);
+          @let name = getTranslationKey(field.name) | translate;
+
+          <mat-form-field
+            [matTooltip]="getTranslationKey('description.' + field.name) | translate"
+            matTooltipPosition="left"
+          >
+            <mat-label> {{ name }}</mat-label>
+
+            @switch (field?.['@type']) {
+              @case (FieldType.TEXT) {
+                <input type="text" [formControlName]="field.name" matInput />
+              }
+              @case (FieldType.NewPasswordField) {
+                <input type="password" [formControlName]="field.name" matInput />
+              }
+              @default {
+                <p>This input type {{ field?.['@type'] }} is not implemented.</p>
+              }
+            }
+
+            @if (_control?.hasError('required')) {
+              <mat-error> {{ getTranslationKey('validators.required') | translate: { name } }}</mat-error>
+            }
+            @if (_control?.hasError('maxlength')) {
+              <mat-error> {{ getTranslationKey('validators.maxLength') | translate: { name , maxLength: field.maxLength } }}</mat-error>
+            }
+            @if (_control?.hasError('minlength')) {
+              <mat-error> {{ getTranslationKey('validators.minlength') | translate: { name , minLength: field.minLength } }}</mat-error>
+            }
+
+          </mat-form-field>
+        }
+
+        <button type="submit" [disabled]="signUpForm.invalid"> {{ getTranslationKey('register') | translate }}</button>
+      }
+    </form>
+  </div>
+</div>

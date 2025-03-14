@@ -1,0 +1,15 @@
+@mixin font-face($file-name,
+  $weight: normal,
+  $style: normal,
+  $font-family: null,
+) {
+  $final-font-family: if($font-family !=null, $font-family, $file-name);
+
+  @font-face {
+    font-family: '#{$final-font-family}';
+    src: url('../fonts/#{$file-name}.woff2') format('woff2');
+    font-weight: $weight;
+    font-style: $style;
+    font-display: serif;
+  }
+}
