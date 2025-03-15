@@ -1,21 +1,23 @@
 @use '@angular/material' as mat;
-@use 'variables' as var;
-@use "mixins";
+@use './variables' as var;
+@use "./mixins";
 
 @include mixins.font-face('IRANSansXV', 400);
 
 // config material design styles
-@include mat.theme(
-    (
-      color: (
-        theme-type: light,
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette
-      ),
-      typography: var.$font-family,
-      density: 0
-    )
-);
+html {
+  @include mat.theme(
+      (
+        color: (
+          theme-type: light,
+          primary: mat.$azure-palette,
+          tertiary: mat.$blue-palette
+        ),
+        typography: var.$font-family,
+        density: 0
+      )
+  );
+}
 
 .mat-mdc-form-field-infix {
   min-height: 2.3rem !important;

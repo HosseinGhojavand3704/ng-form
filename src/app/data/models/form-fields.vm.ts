@@ -4,9 +4,9 @@ import { IFields } from "./field.vm";
 export interface IFormFields {
     fieldDescriptionShowType: keyof typeof FieldDescriptionType;
     fields: Array<IFields>;
-    forms: IFormFields[];
-    name: string;
-    nestedFormShowType: string;
-    submitLabel: string;
-    title: string;
+    forms?: IFormFields[];
+    name?: string;
+    nestedFormShowType?: string;
+    submitLabel?: string;
+    title?: string;
 }

@@ -1,21 +1,16 @@
-import {httpResource} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {inject, Injectable} from '@angular/core';
 import {ISignupVM} from '../models/signup.vm';
+import {Observable} from 'rxjs';
 
 @Injectable()
 export class AuthService {
+  http = inject(HttpClient);
 
-  private httpUrl = '/app/sign-up';
+  getSignUp = (): Observable<ISignupVM> =>
+    this.http.get<ISignupVM>('/app/sign-up');
 
-  readonly getSignUp = httpResource<ISignupVM>(() => ({
-    url: this.httpUrl
-  })).asReadonly();
-
-  readonly postSignUp = (body: Record<string, unknown>) =>
-    httpResource<void>(() => ({
-      url: this.httpUrl,
-      method: "POST",
-      body
-    })).asReadonly();
+  postSignUp = (body: Record<string, unknown>): Observable<void> =>
+    this.http.post<void>('/app/sign-up', { body });
 
 }

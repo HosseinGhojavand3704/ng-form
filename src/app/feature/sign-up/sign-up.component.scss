@@ -1,4 +1,5 @@
 @use '../../../assets/scss/variables' as var;
+@use 'sass:color';
 
 .register {
   &-container {
@@ -70,7 +71,8 @@
       }
 
       &:not(:disabled):hover {
-        background: darken(#0096ff, 10%);
+        background: color.scale(#0096ff, $lightness: -20%)
+
       }
     }
   }

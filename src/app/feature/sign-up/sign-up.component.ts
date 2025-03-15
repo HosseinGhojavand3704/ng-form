@@ -1,4 +1,13 @@
-import {Component, effect, inject, Injector, linkedSignal, runInInjectionContext} from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  Injector,
+  OnInit,
+  runInInjectionContext,
+  signal
+} from '@angular/core';
 import {FormBuilder, FormControl, ReactiveFormsModule, ValidatorFn, Validators} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {CommonModule} from '@angular/common';
@@ -7,6 +16,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {FieldType} from '../../data/models/field-type.enum.enum';
 import {AuthService} from '../../data/services/auth.service';
 import {IFields} from '../../data/models/field.vm';
+import {IFormFields} from '../../data/models/form-fields.vm';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -16,22 +27,26 @@ import {IFields} from '../../data/models/field.vm';
   providers: [AuthService],
   imports: [MatInputModule, MatTooltipModule, ReactiveFormsModule, CommonModule, TranslatePipe],
 })
-export class SignUpComponent {
+export class SignUpComponent  implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly FieldType = FieldType;
 
-  formConfig = linkedSignal({
-    source: this.authService.getSignUp.value,
-    computation: (value) => value?.form,
-  }).asReadonly();
+  formConfig = signal<IFormFields | null>(null);
 
   signUpForm = this.formBuilder.group({});
 
   constructor() {
     effect(() => this.buildFormControls());
+  }
+
+  ngOnInit(): void {
+    this.authService.getSignUp()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(res => this.formConfig.set(res.form));
   }
 
   onSubmit(): void {
@@ -52,7 +67,7 @@ export class SignUpComponent {
     return translationPrefix + this.convertToCamelCase(fieldName);
   }
 
-  private buildFormControls(): void {
+  buildFormControls(): void {
     const config = this.formConfig();
     if (!config)
       return;
@@ -84,7 +99,7 @@ export class SignUpComponent {
     ];
   }
 
-  private generateValidators(field: IFields): ValidatorFn[] {
+  generateValidators(field: IFields): ValidatorFn[] {
     const validators: ValidatorFn[] = [];
 
     if (field.required) validators.push(Validators.required);
@@ -94,12 +109,12 @@ export class SignUpComponent {
     return validators;
   }
 
-  private removeConfirmationField(formData: Record<string, unknown>): Record<string, unknown> {
+  removeConfirmationField(formData: Record<string, unknown>): Record<string, unknown> {
     const {confirm_password, ...cleanData} = formData;
     return cleanData;
   }
 
-  private convertToCamelCase(input: string): string {
+  convertToCamelCase(input: string): string {
     return input
       .toLowerCase()
       .split('_')
